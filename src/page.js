@@ -117,7 +117,7 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
   <div class="card">
     <h3>粘贴地图链接</h3>
     <div class="input-row">
-      <input id="urlInput" placeholder="Apple/Google/高德地图链接 或 经纬度" />
+      <input id="urlInput" placeholder="Apple/Google/高德地图链接 或 纬度,经度" />
       <button class="btn btn-secondary" style="flex:none;min-width:56px" onclick="parseUrl()">解析</button>
     </div>
     <div style="font-size:11px;color:var(--gray);margin-top:6px">支持 Apple Maps · Google Maps · 高德 · 百度 · 坐标文本</div>
@@ -175,7 +175,7 @@ map.on('click', e => { setPos(e.latlng.lat, e.latlng.lng); });
 function setPos(newLat, newLon) {
   lat = newLat; lon = newLon; selected = true;
   marker.setLatLng([lat, lon]);
-  document.getElementById('coords').textContent = '经度 ' + lon.toFixed(6) + '  纬度 ' + lat.toFixed(6);
+  document.getElementById('coords').textContent = '纬度 ' + lat.toFixed(6) + '  经度 ' + lon.toFixed(6);
 }
 
 function moveTo(newLat, newLon, zoom) {
@@ -215,7 +215,7 @@ function renderFavs() {
     return '<div class="fav-item" onclick="loadFav(' + i + ')">' +
       '<div class="fav-info">' +
         '<div class="fav-name">' + escHtml(f.name) + '<\\/div>' +
-        '<div class="fav-coords">' + f.lon.toFixed(6) + ', ' + f.lat.toFixed(6) + '<\\/div>' +
+        '<div class="fav-coords">' + f.lat.toFixed(6) + ', ' + f.lon.toFixed(6) + '<\\/div>' +
         (isActive ? '<div class="fav-active">\\u2713 当前生效<\\/div>' : '') +
       '<\\/div>' +
       '<button class="fav-del" onclick="event.stopPropagation();delFav(' + i + ')" title="删除">\\u00d7<\\/button>' +
@@ -229,7 +229,7 @@ function escHtml(s) {
 
 function addFav() {
   if (!selected) { toast('请先在地图上选择一个位置'); return; }
-  document.getElementById('favModalCoords').textContent = lon.toFixed(6) + ', ' + lat.toFixed(6);
+  document.getElementById('favModalCoords').textContent = lat.toFixed(6) + ', ' + lon.toFixed(6);
   document.getElementById('favNameInput').value = '';
   document.getElementById('favModal').classList.add('show');
   setTimeout(() => document.getElementById('favNameInput').focus(), 100);
@@ -254,7 +254,7 @@ function loadFav(i) {
   const favs = getFavs();
   if (!favs[i]) return;
   moveTo(favs[i].lat, favs[i].lon, 15);
-  toast(favs[i].name + ' (' + favs[i].lon.toFixed(4) + ', ' + favs[i].lat.toFixed(4) + ')');
+  toast(favs[i].name + ' (' + favs[i].lat.toFixed(4) + ', ' + favs[i].lon.toFixed(4) + ')');
 }
 
 function delFav(i) {
@@ -284,7 +284,7 @@ function queryActive() {
       if (d.success && d.longitude && d.latitude) {
         activeLon = parseFloat(d.longitude);
         activeLat = parseFloat(d.latitude);
-        el.textContent = '经度 ' + activeLon.toFixed(6) + '  纬度 ' + activeLat.toFixed(6) + (d.accuracy ? '  精度 ' + d.accuracy + 'm' : '');
+        el.textContent = '纬度 ' + activeLat.toFixed(6) + '  经度 ' + activeLon.toFixed(6) + (d.accuracy ? '  精度 ' + d.accuracy + 'm' : '');
         renderFavs();
       } else {
         activeLon = null; activeLat = null;
@@ -326,8 +326,8 @@ async function save() {
     if (d.success) {
       activeLon = lon; activeLat = lat;
       btn.textContent = '\\u2713 已储存'; btn.className = 'btn btn-primary success';
-      document.getElementById('status').textContent = '\\u2713 已写入: ' + lon.toFixed(6) + ', ' + lat.toFixed(6) + ' \\u00b7 ' + new Date().toLocaleTimeString('zh-CN');
-      document.getElementById('activeValue').textContent = '经度 ' + lon.toFixed(6) + '  纬度 ' + lat.toFixed(6) + '  精度 25m';
+      document.getElementById('status').textContent = '\\u2713 已写入: ' + lat.toFixed(6) + ', ' + lon.toFixed(6) + ' \\u00b7 ' + new Date().toLocaleTimeString('zh-CN');
+      document.getElementById('activeValue').textContent = '纬度 ' + lat.toFixed(6) + '  经度 ' + lon.toFixed(6) + '  精度 25m';
       renderFavs();
       toast('\\u2713 坐标已写入设备，下次定位生效');
       setTimeout(() => { btn.textContent='储存到设备'; btn.className='btn btn-primary'; btn.disabled=false; }, 2500);
@@ -361,7 +361,7 @@ function parseMapUrl(text) {
   if (m) return { lat: parseFloat(m[2]), lon: parseFloat(m[1]) };
   m = text.match(/(?:location|center)=([0-9.-]+),([0-9.-]+)/);
   if (m) return { lat: parseFloat(m[2]), lon: parseFloat(m[1]) };
-  m = text.match(/([0-9]+\\.[0-9]+)[,\\s]+([0-9]+\\.[0-9]+)/);
+  m = text.match(/(-?[0-9]+(?:\\.[0-9]+)?)[,\\s]+(-?[0-9]+(?:\\.[0-9]+)?)/);
   if (m) {
     const a = parseFloat(m[1]), b = parseFloat(m[2]);
     if (a < 90 && b > 90) return { lat: a, lon: b };
@@ -377,7 +377,7 @@ function parseUrl() {
   const result = parseMapUrl(input);
   if (!result) { toast('无法解析坐标，请检查链接格式', 3000); return; }
   moveTo(result.lat, result.lon, 15);
-  toast('已解析: ' + result.lon.toFixed(4) + ', ' + result.lat.toFixed(4));
+  toast('已解析: ' + result.lat.toFixed(4) + ', ' + result.lon.toFixed(4));
 }
 
 async function searchPlace() {

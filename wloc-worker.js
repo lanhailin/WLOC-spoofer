@@ -122,7 +122,7 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
   <div class="card">
     <h3>粘贴地图链接</h3>
     <div class="input-row">
-      <input id="urlInput" placeholder="Apple/Google/高德地图链接 或 经纬度" />
+      <input id="urlInput" placeholder="Apple/Google/高德地图链接 或 纬度,经度" />
       <button class="btn btn-secondary" style="flex:none;min-width:56px" onclick="parseUrl()">解析</button>
     </div>
     <div style="font-size:11px;color:var(--gray);margin-top:6px">支持 Apple Maps · Google Maps · 高德 · 百度 · 坐标文本</div>
@@ -167,7 +167,7 @@ map.on('click', e => { setPos(e.latlng.lat, e.latlng.lng); });
 function setPos(newLat, newLon) {
   lat = newLat; lon = newLon; selected = true;
   marker.setLatLng([lat, lon]);
-  document.getElementById('coords').textContent = '\\u7ecf\\u5ea6 ' + lon.toFixed(6) + '  \\u7eac\\u5ea6 ' + lat.toFixed(6);
+  document.getElementById('coords').textContent = '\\u7eac\\u5ea6 ' + lat.toFixed(6) + '  \\u7ecf\\u5ea6 ' + lon.toFixed(6);
 }
 
 function moveTo(newLat, newLon, zoom) {
@@ -207,7 +207,7 @@ function renderFavs() {
     return '<div class="fav-item" onclick="loadFav(' + i + ')">' +
       '<div class="fav-info">' +
         '<div class="fav-name">' + escHtml(f.name) + '</div>' +
-        '<div class="fav-coords">' + f.lon.toFixed(6) + ', ' + f.lat.toFixed(6) + '</div>' +
+        '<div class="fav-coords">' + f.lat.toFixed(6) + ', ' + f.lon.toFixed(6) + '</div>' +
         (isActive ? '<div class="fav-active">\\u2713 \\u5f53\\u524d\\u751f\\u6548</div>' : '') +
       '<\/div>' +
       '<button class="fav-del" onclick="event.stopPropagation();delFav(' + i + ')" title="\\u5220\\u9664">\\u00d7<\/button>' +
@@ -221,7 +221,7 @@ function escHtml(s) {
 
 function addFav() {
   if (!selected) { toast('\\u8bf7\\u5148\\u5728\\u5730\\u56fe\\u4e0a\\u9009\\u62e9\\u4e00\\u4e2a\\u4f4d\\u7f6e'); return; }
-  document.getElementById('favModalCoords').textContent = lon.toFixed(6) + ', ' + lat.toFixed(6);
+  document.getElementById('favModalCoords').textContent = lat.toFixed(6) + ', ' + lon.toFixed(6);
   document.getElementById('favNameInput').value = '';
   document.getElementById('favModal').classList.add('show');
   setTimeout(() => document.getElementById('favNameInput').focus(), 100);
@@ -246,7 +246,7 @@ function loadFav(i) {
   const favs = getFavs();
   if (!favs[i]) return;
   moveTo(favs[i].lat, favs[i].lon, 15);
-  toast(favs[i].name + ' (' + favs[i].lon.toFixed(4) + ', ' + favs[i].lat.toFixed(4) + ')');
+  toast(favs[i].name + ' (' + favs[i].lat.toFixed(4) + ', ' + favs[i].lon.toFixed(4) + ')');
 }
 
 function delFav(i) {
@@ -276,7 +276,7 @@ function queryActive() {
       if (d.success && d.longitude && d.latitude) {
         activeLon = parseFloat(d.longitude);
         activeLat = parseFloat(d.latitude);
-        el.textContent = '\\u7ecf\\u5ea6 ' + activeLon.toFixed(6) + '  \\u7eac\\u5ea6 ' + activeLat.toFixed(6) + (d.accuracy ? '  \\u7cbe\\u5ea6 ' + d.accuracy + 'm' : '');
+        el.textContent = '\\u7eac\\u5ea6 ' + activeLat.toFixed(6) + '  \\u7ecf\\u5ea6 ' + activeLon.toFixed(6) + (d.accuracy ? '  \\u7cbe\\u5ea6 ' + d.accuracy + 'm' : '');
         renderFavs();
       } else {
         activeLon = null; activeLat = null;
@@ -318,8 +318,8 @@ async function save() {
     if (d.success) {
       activeLon = lon; activeLat = lat;
       btn.textContent = '\\u2713 \\u5df2\\u50a8\\u5b58'; btn.className = 'btn btn-primary success';
-      document.getElementById('status').textContent = '\\u2713 \\u5df2\\u5199\\u5165: ' + lon.toFixed(6) + ', ' + lat.toFixed(6) + ' \\u00b7 ' + new Date().toLocaleTimeString('zh-CN');
-      document.getElementById('activeValue').textContent = '\\u7ecf\\u5ea6 ' + lon.toFixed(6) + '  \\u7eac\\u5ea6 ' + lat.toFixed(6) + '  \\u7cbe\\u5ea6 25m';
+      document.getElementById('status').textContent = '\\u2713 \\u5df2\\u5199\\u5165: ' + lat.toFixed(6) + ', ' + lon.toFixed(6) + ' \\u00b7 ' + new Date().toLocaleTimeString('zh-CN');
+      document.getElementById('activeValue').textContent = '\\u7eac\\u5ea6 ' + lat.toFixed(6) + '  \\u7ecf\\u5ea6 ' + lon.toFixed(6) + '  \\u7cbe\\u5ea6 25m';
       renderFavs();
       toast('\\u2713 \\u5750\\u6807\\u5df2\\u5199\\u5165\\u8bbe\\u5907\\uff0c\\u4e0b\\u6b21\\u5b9a\\u4f4d\\u751f\\u6548');
       setTimeout(() => { btn.textContent='\\u50a8\\u5b58\\u5230\\u8bbe\\u5907'; btn.className='btn btn-primary'; btn.disabled=false; }, 2500);
@@ -353,7 +353,7 @@ function parseMapUrl(text) {
   if (m) return { lat: parseFloat(m[2]), lon: parseFloat(m[1]) };
   m = text.match(/(?:location|center)=([0-9.-]+),([0-9.-]+)/);
   if (m) return { lat: parseFloat(m[2]), lon: parseFloat(m[1]) };
-  m = text.match(/([0-9]+\\.[0-9]+)[,\\s]+([0-9]+\\.[0-9]+)/);
+  m = text.match(/(-?[0-9]+(?:\\.[0-9]+)?)[,\\s]+(-?[0-9]+(?:\\.[0-9]+)?)/);
   if (m) {
     const a = parseFloat(m[1]), b = parseFloat(m[2]);
     if (a < 90 && b > 90) return { lat: a, lon: b };
@@ -369,7 +369,7 @@ function parseUrl() {
   const result = parseMapUrl(input);
   if (!result) { toast('\\u65e0\\u6cd5\\u89e3\\u6790\\u5750\\u6807\\uff0c\\u8bf7\\u68c0\\u67e5\\u94fe\\u63a5\\u683c\\u5f0f', 3000); return; }
   moveTo(result.lat, result.lon, 15);
-  toast('\\u5df2\\u89e3\\u6790: ' + result.lon.toFixed(4) + ', ' + result.lat.toFixed(4));
+  toast('\\u5df2\\u89e3\\u6790: ' + result.lat.toFixed(4) + ', ' + result.lon.toFixed(4));
 }
 
 async function searchPlace() {
