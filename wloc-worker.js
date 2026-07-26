@@ -386,15 +386,17 @@ async function searchPlace() {
   } catch(e) { toast('\\u641c\\u7d22\\u5931\\u8d25', 3000); }
 }
 
-document.addEventListener('paste', e => {
+const urlInput = document.getElementById('urlInput');
+urlInput.addEventListener('paste', e => {
   const text = (e.clipboardData||window.clipboardData).getData('text');
   if (text && (text.includes('map') || text.includes('loc') || text.includes('lnglat') || /[0-9]+\\.[0-9]+/.test(text))) {
-    document.getElementById('urlInput').value = text;
-    setTimeout(parseUrl, 200);
+    e.preventDefault();
+    urlInput.value = text;
+    parseUrl();
   }
 });
 document.getElementById('searchInput').addEventListener('keydown', e => { if(e.key==='Enter') searchPlace(); });
-document.getElementById('urlInput').addEventListener('keydown', e => { if(e.key==='Enter') parseUrl(); });
+urlInput.addEventListener('keydown', e => { if(e.key==='Enter') parseUrl(); });
 document.getElementById('favNameInput').addEventListener('keydown', e => { if(e.key==='Enter') confirmFav(); });
 
 renderFavs();
