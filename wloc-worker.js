@@ -96,7 +96,7 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
     <h3>选择目标位置</h3>
     <div class="coords" id="coords">点击地图或使用下方工具选择位置</div>
     <div class="row">
-      <button class="btn btn-primary" id="saveBtn" onclick="save()">储存到设备</button>
+      <button class="btn btn-primary" id="saveBtn" onclick="save()">保存位置</button>
       <button class="btn btn-secondary" onclick="addFav()">收藏位置</button>
       <button class="btn btn-secondary" onclick="locateMe()">当前位置</button>
     </div>
@@ -134,7 +134,7 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
       <button class="btn btn-secondary" style="flex:none;min-width:56px" onclick="searchPlace()">搜索</button>
     </div>
   </div>
-  <div class="status" id="status">选好位置后点击「储存到设备」写入代理工具</div>
+  <div class="status" id="status">选好位置后点击「保存位置」写入代理工具</div>
 </div>
 <div class="toast" id="toast"></div>
 <div class="modal-overlay" id="favModal">
@@ -322,12 +322,12 @@ async function save() {
       document.getElementById('activeValue').textContent = '\\u7eac\\u5ea6 ' + lat.toFixed(6) + '  \\u7ecf\\u5ea6 ' + lon.toFixed(6) + '  \\u7cbe\\u5ea6 25m';
       renderFavs();
       toast('\\u2713 \\u5750\\u6807\\u5df2\\u5199\\u5165\\u8bbe\\u5907\\uff0c\\u4e0b\\u6b21\\u5b9a\\u4f4d\\u751f\\u6548');
-      setTimeout(() => { btn.textContent='\\u50a8\\u5b58\\u5230\\u8bbe\\u5907'; btn.className='btn btn-primary'; btn.disabled=false; }, 2500);
+      setTimeout(() => { btn.textContent='\\u4fdd\\u5b58\\u4f4d\\u7f6e'; btn.className='btn btn-primary'; btn.disabled=false; }, 2500);
     } else {
       throw new Error(d.error || '\\u5199\\u5165\\u5931\\u8d25');
     }
   } catch(e) {
-    btn.textContent = '\\u50a8\\u5b58\\u5230\\u8bbe\\u5907'; btn.className = 'btn btn-primary'; btn.disabled = false;
+    btn.textContent = '\\u4fdd\\u5b58\\u4f4d\\u7f6e'; btn.className = 'btn btn-primary'; btn.disabled = false;
     showError(true);
     toast('\\u2717 \\u50a8\\u5b58\\u5931\\u8d25 - \\u8bf7\\u68c0\\u67e5\\u6a21\\u5757\\u914d\\u7f6e', 4000);
   }

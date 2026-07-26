@@ -91,7 +91,7 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
     <h3>选择目标位置</h3>
     <div class="coords" id="coords">点击地图或使用下方工具选择位置</div>
     <div class="row">
-      <button class="btn btn-primary" id="saveBtn" onclick="save()">储存到设备</button>
+      <button class="btn btn-primary" id="saveBtn" onclick="save()">保存位置</button>
       <button class="btn btn-secondary" onclick="addFav()">收藏位置</button>
       <button class="btn btn-secondary" onclick="locateMe()">当前位置</button>
     </div>
@@ -129,7 +129,7 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
       <button class="btn btn-secondary" style="flex:none;min-width:56px" onclick="searchPlace()">搜索</button>
     </div>
   </div>
-  <div class="status" id="status">选好位置后点击「储存到设备」写入代理工具</div>
+  <div class="status" id="status">选好位置后点击「保存位置」写入代理工具</div>
 </div>
 <div class="toast" id="toast"></div>
 <div class="modal-overlay" id="favModal">
@@ -330,12 +330,12 @@ async function save() {
       document.getElementById('activeValue').textContent = '纬度 ' + lat.toFixed(6) + '  经度 ' + lon.toFixed(6) + '  精度 25m';
       renderFavs();
       toast('\\u2713 坐标已写入设备，下次定位生效');
-      setTimeout(() => { btn.textContent='储存到设备'; btn.className='btn btn-primary'; btn.disabled=false; }, 2500);
+      setTimeout(() => { btn.textContent='保存位置'; btn.className='btn btn-primary'; btn.disabled=false; }, 2500);
     } else {
       throw new Error(d.error || '写入失败');
     }
   } catch(e) {
-    btn.textContent = '储存到设备'; btn.className = 'btn btn-primary'; btn.disabled = false;
+    btn.textContent = '保存位置'; btn.className = 'btn btn-primary'; btn.disabled = false;
     showError(true);
     toast('\\u2717 储存失败 - 请检查模块配置', 4000);
   }
