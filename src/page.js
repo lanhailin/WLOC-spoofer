@@ -31,6 +31,10 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 .input-row { display:flex; gap:8px; margin-top:10px; }
 .input-row input { flex:1; padding:10px 12px; border:1px solid #d1d1d6; border-radius:8px; font-size:14px; outline:none; min-width:0; }
 .input-row input:focus { border-color:var(--blue); }
+.input-wrap { flex:1; min-width:0; position:relative; }
+.input-wrap input { width:100%; padding-right:36px; }
+.input-clear { position:absolute; top:50%; right:6px; transform:translateY(-50%); display:none; align-items:center; justify-content:center; width:26px; height:26px; border:none; border-radius:50%; background:transparent; color:var(--gray); font-size:20px; line-height:1; cursor:pointer; }
+.input-clear:active { background:#e5e5ea; }
 .status { font-size:12px; color:var(--gray); margin-top:8px; text-align:center; }
 .error-banner { background:var(--red); color:#fff; padding:14px 16px; border-radius:12px; margin-bottom:12px; font-size:14px; line-height:1.5; display:none; }
 .error-banner b { display:block; margin-bottom:4px; }
@@ -117,7 +121,10 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
   <div class="card">
     <h3>粘贴地图链接</h3>
     <div class="input-row">
-      <input id="urlInput" placeholder="Apple/Google/高德地图链接 或 纬度,经度" />
+      <div class="input-wrap">
+        <input id="urlInput" placeholder="Apple/Google/高德地图链接 或 纬度,经度" />
+        <button class="input-clear" type="button" id="clearUrlInput" title="清除" aria-label="清除输入内容">&times;</button>
+      </div>
       <button class="btn btn-secondary" style="flex:none;min-width:56px" onclick="parseUrl()">解析</button>
     </div>
     <div style="font-size:11px;color:var(--gray);margin-top:6px">支持 Apple Maps · Google Maps · 高德 · 百度 · 坐标文本</div>
@@ -395,16 +402,27 @@ async function searchPlace() {
 }
 
 const urlInput = document.getElementById('urlInput');
+const clearUrlInput = document.getElementById('clearUrlInput');
+function updateUrlInputClearButton() {
+  clearUrlInput.style.display = urlInput.value ? 'flex' : 'none';
+}
 urlInput.addEventListener('paste', e => {
   const text = (e.clipboardData||window.clipboardData).getData('text');
   if (text && (text.includes('map') || text.includes('loc') || text.includes('lnglat') || /[0-9]+\\.[0-9]+/.test(text))) {
     e.preventDefault();
     urlInput.value = text;
+    updateUrlInputClearButton();
     parseUrl();
   }
 });
 document.getElementById('searchInput').addEventListener('keydown', e => { if(e.key==='Enter') searchPlace(); });
 urlInput.addEventListener('keydown', e => { if(e.key==='Enter') parseUrl(); });
+urlInput.addEventListener('input', updateUrlInputClearButton);
+clearUrlInput.addEventListener('click', () => {
+  urlInput.value = '';
+  updateUrlInputClearButton();
+  urlInput.focus();
+});
 document.getElementById('favNameInput').addEventListener('keydown', e => { if(e.key==='Enter') confirmFav(); });
 
 renderFavs();
